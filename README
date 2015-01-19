@@ -1,0 +1,18 @@
+# go-rbd
+
+These are librbd bindings for the Go programming language.
+
+For Go librados bindings, please visit:
+	https://github.com/clbh/go-rados
+
+To obtain the Ceph source from which librbd can be built,
+please visit:
+	https://github.com/ceph/ceph
+
+
+Authors:
+	Benoit Page-Guitard (benoit@anchor.net.au)
+
+License:
+	GNU General Public License v3
+	http://www.gnu.org/licenses/gpl.html
