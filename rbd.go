@@ -66,7 +66,7 @@ func LibraryVersion() (major, minor, extra int) {
 //   Pool operations
 ////
 
-func DeleteImage(pool *rados.Pool, imageName string) error {
+func RemoveImage(pool *rados.Pool, imageName string) error {
 	// TODO: Release memory allocated by C.CString()
 	if result := C.rbd_remove(C.rados_ioctx_t(pool.Handle()), C.CString(imageName)); result < 0 {
 		return errors.New("Failed to remove image")
