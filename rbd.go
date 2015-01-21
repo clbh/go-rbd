@@ -93,7 +93,7 @@ func ListImages(pool *rados.Pool) ([]string, error) {
 		return []string{}, errors.New("Failed to fetch image list from pool")
 	}
 
-	// 'buf' now contains up to 4096 bytes worth of nul-separated image name
+	// 'buf' now contains up to 65536 bytes worth of nul-separated image name
 	// strings, which we need to split up to return a list of images
 
 	start := 0
