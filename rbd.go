@@ -30,12 +30,14 @@ import (
 )
 
 // Our bindings version
-const VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH = 1, 0, 0
+const VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH = 1, 1, 0
 
 // Exported types
 type Image struct {
-	handle C.rbd_image_t
-	name   string
+	handle   C.rbd_image_t
+	name     string
+	snapshot string
+	readonly bool
 }
 
 type ImageInfo struct {
@@ -126,6 +128,52 @@ func OpenImage(pool *rados.Pool, name string) (*Image, error) {
 	return &Image{
 		handle: handle,
 		name:   name,
+	}, nil
+}
+
+func OpenImageRO(pool *rados.Pool, name string) (*Image, error) {
+	var handle C.rbd_image_t
+
+	// TODO: Release memory allocated by C.CString()
+	if result := C.rbd_open_read_only(C.rados_ioctx_t(pool.Handle()), C.CString(name), &handle, nil); result < 0 {
+		return nil, errors.New("Failed to open RBD image")
+	}
+
+	return &Image{
+		handle:   handle,
+		name:     name,
+		readonly: true,
+	}, nil
+}
+
+func OpenImageSnapshot(pool *rados.Pool, name string, snapshot string) (*Image, error) {
+	var handle C.rbd_image_t
+
+	// TODO: Release memory allocated by C.CString()
+	if result := C.rbd_open(C.rados_ioctx_t(pool.Handle()), C.CString(name), &handle, C.CString(snapshot)); result < 0 {
+		return nil, errors.New("Failed to open RBD image")
+	}
+
+	return &Image{
+		handle:   handle,
+		name:     name,
+		snapshot: snapshot,
+	}, nil
+}
+
+func OpenImageSnapshotRO(pool *rados.Pool, name string, snapshot string) (*Image, error) {
+	var handle C.rbd_image_t
+
+	// TODO: Release memory allocated by C.CString()
+	if result := C.rbd_open_read_only(C.rados_ioctx_t(pool.Handle()), C.CString(name), &handle, C.CString(snapshot)); result < 0 {
+		return nil, errors.New("Failed to open RBD image")
+	}
+
+	return &Image{
+		handle:   handle,
+		name:     name,
+		snapshot: snapshot,
+		readonly: true,
 	}, nil
 }
 
